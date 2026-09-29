@@ -1,4 +1,35 @@
-import { Program, Mahasantri, AbsenRecord } from './types';
+import { Program, Mahasantri, AbsenRecord, BKTindakLanjut } from './types';
+
+export const defaultBK: BKTindakLanjut = {
+  sudahDitindaklanjuti: false,
+  tanggalTindakLanjut: '',
+  petugasBK: '',
+  jenisSanksi: '',
+  catatanBK: '',
+  statusPenyelesaian: 'belum',
+};
+
+export const jenisSanksiOptions = [
+  'Teguran Lisan',
+  'Teguran Tertulis',
+  'Piket Masjid Tambahan',
+  'Hafalan Tambahan',
+  'Surat Peringatan 1',
+  'Surat Peringatan 2',
+  'Surat Peringatan 3',
+  'Pemanggilan Wali',
+  'Skorsing Ringan',
+  'Skorsing Berat',
+  'Lainnya',
+];
+
+export const petugasBKOptions = [
+  'Ustadz Ahmad',
+  'Ustadz Muhammad',
+  'Ustadz Abdullah',
+  'Ustadzah Fatimah',
+  'Ustadzah Aisyah',
+];
 
 export const programs: Program[] = [
   // Program Harian
@@ -49,6 +80,27 @@ export const generateSampleAbsen = (): AbsenRecord[] => {
       dailyPrograms.forEach(prog => {
         const status = statuses[Math.floor(Math.random() * statuses.length)];
         const keterangan = status !== 'hadir' ? keteranganOptions[Math.floor(Math.random() * keteranganOptions.length)] : '';
+        
+        // Generate BK data untuk yang tidak hadir
+        let bk: BKTindakLanjut = { ...defaultBK };
+        if (status !== 'hadir') {
+          const sudahTL = Math.random() > 0.4; // 60% sudah ditindaklanjuti
+          if (sudahTL) {
+            const sanksi = jenisSanksiOptions[Math.floor(Math.random() * 5)];
+            const petugas = petugasBKOptions[Math.floor(Math.random() * petugasBKOptions.length)];
+            const tlDate = new Date(d);
+            tlDate.setDate(tlDate.getDate() + Math.floor(Math.random() * 3) + 1);
+            bk = {
+              sudahDitindaklanjuti: true,
+              tanggalTindakLanjut: tlDate.toISOString().split('T')[0],
+              petugasBK: petugas,
+              jenisSanksi: status === 'alpa' ? sanksi : 'Teguran Lisan',
+              catatanBK: status === 'alpa' ? 'Mahasantri dipanggil dan diberikan peringatan' : 'Sudah dikonfirmasi dan dimaklumi',
+              statusPenyelesaian: Math.random() > 0.3 ? 'selesai' : 'proses',
+            };
+          }
+        }
+
         records.push({
           id: `absen-${mhs.id}-${prog.id}-${dateStr}`,
           mahasantriId: mhs.id,
@@ -56,12 +108,27 @@ export const generateSampleAbsen = (): AbsenRecord[] => {
           tanggal: dateStr,
           status,
           keterangan,
+          bk,
         });
       });
       
       // Tasmi' hanya hari Jumat
       if (dayOfWeek === 5) {
         const status = statuses[Math.floor(Math.random() * statuses.length)];
+        let bk: BKTindakLanjut = { ...defaultBK };
+        if (status !== 'hadir') {
+          const sudahTL = Math.random() > 0.4;
+          if (sudahTL) {
+            bk = {
+              sudahDitindaklanjuti: true,
+              tanggalTindakLanjut: dateStr,
+              petugasBK: petugasBKOptions[Math.floor(Math.random() * petugasBKOptions.length)],
+              jenisSanksi: status === 'alpa' ? 'Piket Masjid Tambahan' : 'Teguran Lisan',
+              catatanBK: 'Sudah ditindaklanjuti',
+              statusPenyelesaian: 'selesai',
+            };
+          }
+        }
         records.push({
           id: `absen-${mhs.id}-tasmi-${dateStr}`,
           mahasantriId: mhs.id,
@@ -69,6 +136,7 @@ export const generateSampleAbsen = (): AbsenRecord[] => {
           tanggal: dateStr,
           status,
           keterangan: status !== 'hadir' ? keteranganOptions[Math.floor(Math.random() * keteranganOptions.length)] : '',
+          bk,
         });
       }
       
@@ -77,6 +145,17 @@ export const generateSampleAbsen = (): AbsenRecord[] => {
         const monthlyPrograms = programs.filter(p => p.kategori === 'bulanan');
         monthlyPrograms.forEach(prog => {
           const status = statuses[Math.floor(Math.random() * statuses.length)];
+          let bk: BKTindakLanjut = { ...defaultBK };
+          if (status !== 'hadir') {
+            bk = {
+              sudahDitindaklanjuti: Math.random() > 0.5,
+              tanggalTindakLanjut: dateStr,
+              petugasBK: petugasBKOptions[Math.floor(Math.random() * petugasBKOptions.length)],
+              jenisSanksi: 'Teguran Lisan',
+              catatanBK: 'Sudah dikonfirmasi',
+              statusPenyelesaian: 'selesai',
+            };
+          }
           records.push({
             id: `absen-${mhs.id}-${prog.id}-${dateStr}`,
             mahasantriId: mhs.id,
@@ -84,6 +163,7 @@ export const generateSampleAbsen = (): AbsenRecord[] => {
             tanggal: dateStr,
             status,
             keterangan: status !== 'hadir' ? keteranganOptions[Math.floor(Math.random() * keteranganOptions.length)] : '',
+            bk,
           });
         });
       }

@@ -96,6 +96,8 @@ const AttendanceHistory: React.FC = () => {
                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Tanggal</th>
                 <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Status</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Keterangan</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">TL BK</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Sanksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -114,6 +116,14 @@ const AttendanceHistory: React.FC = () => {
                       </span>
                     </td>
                     <td className="px-4 py-2.5 text-sm text-gray-600">{r.keterangan || '-'}</td>
+                    <td className="px-4 py-2.5 text-center">
+                      {r.status !== 'hadir' ? (
+                        r.bk.sudahDitindaklanjuti 
+                          ? <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-green-100 text-green-700">✓ Ya</span>
+                          : <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-red-100 text-red-700">✗ Belum</span>
+                      ) : <span className="text-xs text-gray-400">-</span>}
+                    </td>
+                    <td className="px-4 py-2.5 text-sm text-gray-600">{r.bk.jenisSanksi || '-'}</td>
                   </tr>
                 );
               })}

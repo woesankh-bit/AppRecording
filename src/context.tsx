@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Mahasantri, AbsenRecord } from './types';
-import { sampleMahasantri, generateSampleAbsen } from './data';
+import { sampleMahasantri, generateSampleAbsen, defaultBK } from './data';
 
 interface AppState {
   mahasantriList: Mahasantri[];
@@ -23,7 +23,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const [absenRecords, setAbsenRecords] = useState<AbsenRecord[]>(() => {
     const saved = localStorage.getItem('absen-records');
-    return saved ? JSON.parse(saved) : generateSampleAbsen();
+    if (saved) {
+      const parsed: AbsenRecord[] = JSON.parse(saved);
+      // Backward compatibility: add default BK data if missing
+      return parsed.map(r => ({
+        ...r,
+        bk: r.bk || { ...defaultBK },
+      }));
+    }
+    return generateSampleAbsen();
   });
 
   useEffect(() => {

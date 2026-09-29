@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../context';
-import { programs } from '../data';
+import { programs, defaultBK } from '../data';
 import { AbsenStatus } from '../types';
 import { format } from 'date-fns';
 import { Save, CheckCircle } from 'lucide-react';
@@ -33,6 +33,7 @@ const AttendanceInput: React.FC = () => {
         tanggal: selectedDate,
         status,
         keterangan,
+        bk: { ...defaultBK },
       });
     }
   };

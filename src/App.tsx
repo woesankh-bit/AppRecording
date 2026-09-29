@@ -5,9 +5,10 @@ import AttendanceInput from './components/AttendanceInput';
 import AttendanceHistory from './components/AttendanceHistory';
 import StudentManagement from './components/StudentManagement';
 import Reports from './components/Reports';
-import { LayoutDashboard, ClipboardCheck, History, Users, FileBarChart, BookOpen } from 'lucide-react';
+import BKManagement from './components/BKManagement';
+import { LayoutDashboard, ClipboardCheck, History, Users, FileBarChart, BookOpen, Shield } from 'lucide-react';
 
-type Page = 'dashboard' | 'input' | 'history' | 'students' | 'reports';
+type Page = 'dashboard' | 'input' | 'history' | 'students' | 'reports' | 'bk';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('dashboard');
@@ -17,6 +18,7 @@ const App: React.FC = () => {
     { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
     { id: 'input', label: 'Input Absensi', icon: <ClipboardCheck className="w-5 h-5" /> },
     { id: 'history', label: 'Riwayat Absensi', icon: <History className="w-5 h-5" /> },
+    { id: 'bk', label: 'Bimbingan Konseling', icon: <Shield className="w-5 h-5" /> },
     { id: 'students', label: 'Data Mahasantri', icon: <Users className="w-5 h-5" /> },
     { id: 'reports', label: 'Laporan & Export', icon: <FileBarChart className="w-5 h-5" /> },
   ];
@@ -28,6 +30,7 @@ const App: React.FC = () => {
       case 'history': return <AttendanceHistory />;
       case 'students': return <StudentManagement />;
       case 'reports': return <Reports />;
+      case 'bk': return <BKManagement />;
       default: return <Dashboard />;
     }
   };

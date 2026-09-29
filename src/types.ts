@@ -9,6 +9,15 @@ export interface Mahasantri {
 
 export type AbsenStatus = 'hadir' | 'sakit' | 'izin' | 'alpa';
 
+export interface BKTindakLanjut {
+  sudahDitindaklanjuti: boolean;
+  tanggalTindakLanjut: string;
+  petugasBK: string;
+  jenisSanksi: string;
+  catatanBK: string;
+  statusPenyelesaian: 'belum' | 'proses' | 'selesai';
+}
+
 export interface AbsenRecord {
   id: string;
   mahasantriId: string;
@@ -16,6 +25,7 @@ export interface AbsenRecord {
   tanggal: string;
   status: AbsenStatus;
   keterangan: string;
+  bk: BKTindakLanjut;
 }
 
 export interface Program {

@@ -104,14 +104,17 @@ const Reports: React.FC = () => {
         formatDateShort(r.tanggal),
         getStatusLabel(r.status),
         r.keterangan || '-',
+        r.bk.sudahDitindaklanjuti ? 'Ya' : 'Belum',
+        r.bk.jenisSanksi || '-',
+        r.bk.statusPenyelesaian === 'selesai' ? 'Selesai' : r.bk.statusPenyelesaian === 'proses' ? 'Proses' : 'Belum',
       ];
     });
 
     autoTable(doc, {
       startY: 108,
-      head: [['Nama', 'NIM', 'Program', 'Tanggal', 'Status', 'Keterangan']],
+      head: [['Nama', 'NIM', 'Program', 'Tanggal', 'Status', 'Ket.', 'TL BK', 'Sanksi', 'Status']],
       body: tableData,
-      styles: { fontSize: 8 },
+      styles: { fontSize: 7 },
       headStyles: { fillColor: [79, 70, 229] },
     });
 
@@ -127,7 +130,7 @@ const Reports: React.FC = () => {
   };
 
   const exportCSV = () => {
-    const headers = ['Nama', 'NIM', 'Program', 'Tanggal', 'Status', 'Keterangan'];
+    const headers = ['Nama', 'NIM', 'Program', 'Tanggal', 'Status', 'Keterangan', 'Tindak Lanjut BK', 'Jenis Sanksi', 'Status Penyelesaian'];
     const rows = filteredRecords.map(r => {
       const mhs = mahasantriList.find(m => m.id === r.mahasantriId);
       const prog = programs.find(p => p.id === r.programId);
@@ -138,6 +141,9 @@ const Reports: React.FC = () => {
         r.tanggal,
         getStatusLabel(r.status),
         r.keterangan || '',
+        r.bk.sudahDitindaklanjuti ? 'Ya' : 'Belum',
+        r.bk.jenisSanksi || '',
+        r.bk.statusPenyelesaian === 'selesai' ? 'Selesai' : r.bk.statusPenyelesaian === 'proses' ? 'Proses' : 'Belum',
       ];
     });
 
@@ -313,6 +319,8 @@ const Reports: React.FC = () => {
                 <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600">Tanggal</th>
                 <th className="px-4 py-2 text-center text-xs font-semibold text-gray-600">Status</th>
                 <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600">Keterangan</th>
+                <th className="px-4 py-2 text-center text-xs font-semibold text-gray-600">TL BK</th>
+                <th className="px-4 py-2 text-left text-xs font-semibold text-gray-600">Sanksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -331,6 +339,14 @@ const Reports: React.FC = () => {
                       </span>
                     </td>
                     <td className="px-4 py-2 text-sm text-gray-600">{r.keterangan || '-'}</td>
+                    <td className="px-4 py-2 text-center">
+                      {r.status !== 'hadir' ? (
+                        r.bk.sudahDitindaklanjuti 
+                          ? <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-green-100 text-green-700">Ya</span>
+                          : <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-red-100 text-red-700">Belum</span>
+                      ) : <span className="text-xs text-gray-400">-</span>}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-600">{r.bk.jenisSanksi || '-'}</td>
                   </tr>
                 );
               })}
